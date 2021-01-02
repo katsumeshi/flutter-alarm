@@ -14,13 +14,10 @@ class AlarmBloc implements Bloc {
     _controller.sink.add(_alarms);
   }
 
-  void toggleRestaurant(Alarm restaurant) {
-    if (_alarms.contains(restaurant)) {
-      _alarms.remove(restaurant);
-    } else {
-      _alarms.add(restaurant);
-    }
-
+  void toggleAlerm(Alarm alarm, bool value) {
+    var index = _alarms.indexOf(alarm);
+    var newAlarm = Alarm(alarm.id, value, alarm.time);
+    _alarms[index] = newAlarm;
     _controller.sink.add(_alarms);
   }
 
