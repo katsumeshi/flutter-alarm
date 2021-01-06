@@ -1,7 +1,8 @@
+import 'package:alarm/DataLayar/alarm.dart';
 import 'package:alarm/UI/alarm_row.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/BLoC/alarm_bloc.dart';
-import 'package:alarm/BLoC/bloc_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SecondRoute extends StatelessWidget {
   static const rowHeight = 70.0;
@@ -9,19 +10,18 @@ class SecondRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<AlarmBloc>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Second Route"),
-      ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: _listView(bloc),
-      ),
-    );
+    return BlocBuilder<AlarmBloc, AlarmState>(builder: (context, state) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text("Second Route"),
+          ),
+          body: Container(
+              alignment: Alignment.topCenter,
+              child: _listView(context, state)));
+    });
   }
 
-  Widget _listView(AlarmBloc bloc) {
+  Widget _listView(BuildContext context, AlarmState state) {
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
@@ -30,9 +30,9 @@ class SecondRoute extends StatelessWidget {
               border: Border(bottom: BorderSide(color: Colors.black12)),
             ),
             height: rowHeight,
-            child: buildRow(bloc, bloc.alarms[0])),
+            child: buildRow(state.alarm)),
         InkWell(
-            onTap: () => print("test"),
+            onTap: () => showRepeatDialog(context, state.alarm),
             child: Container(
                 decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.black12)),
@@ -73,6 +73,46 @@ class SecondRoute extends StatelessWidget {
                   InputDecoration(border: InputBorder.none, hintText: 'Label')),
         )
       ],
+    );
+  }
+
+  void showRepeatDialog(BuildContext context, Alarm alarm) {
+    // final bloc = BlocProvider.of<AlarmBloc>(context);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: alarm.days.entries
+                  .map((e) => InkWell(
+                        onTap: () =>
+                            {}, //bloc.updateDays(bloc.alarms[0], e.key),
+                        child: Row(children: [
+                          Checkbox(value: e.value, onChanged: null),
+                          Spacer(),
+                          Text(e.key),
+                        ]),
+                      ))
+                  .toList()),
+          actions: <Widget>[
+            // ボタン領域
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+
+        // return BlocProvider<AlarmBloc>.value(
+        //   value: bloc, //
+        //   child: dialog,
+        // );
+      },
     );
   }
 }

@@ -1,45 +1,35 @@
 import 'package:alarm/BLoC/alarm_bloc.dart';
-import 'package:alarm/BLoC/bloc_provider.dart';
-import 'package:alarm/DataLayar/alarm.dart';
+// import 'package:alarm/BLoC/bloc_provider.dart';
+// import 'package:alarm/DataLayar/alarm.dart';
 import 'package:alarm/UI/alarm_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'add_screen.dart';
 
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<AlarmBloc>(context);
-
-    return BlocProvider<AlarmBloc>(
-        bloc: AlarmBloc(),
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Alarms'),
-          ),
-          body: Center(
-            child: _bindBloc(bloc),
-          ),
-          floatingActionButton: _add(context),
-        ));
+    return BlocBuilder<AlarmBloc, AlarmState>(builder: (context, state) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Alarms'),
+        ),
+        body: Center(
+          child: _listView(state),
+        ),
+        floatingActionButton: _add(context),
+      );
+    });
   }
 
-  Widget _bindBloc(AlarmBloc bloc) {
-    return StreamBuilder<List<Alarm>>(
-      stream: bloc.alarmsStream,
-      builder: (context, snapshot) {
-        return _listView(bloc);
-      },
-    );
-  }
-
-  Widget _listView(AlarmBloc bloc) {
+  Widget _listView(AlarmState state) {
     return ListView.separated(
         separatorBuilder: (context, index) => Divider(),
-        itemCount: bloc.alarms.length,
+        itemCount: 1,
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
-          return buildRow(bloc, bloc.alarms[i]);
+          return buildRow(state.alarm);
         });
   }
 
