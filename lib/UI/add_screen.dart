@@ -1,3 +1,5 @@
+import 'package:alarm/BLoC/alarms_event.dart';
+import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/DataLayar/alarm.dart';
 import 'package:alarm/UI/alarm_row.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +12,23 @@ class SecondRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlarmBloc, AlarmState>(builder: (context, state) {
+    return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
+      if (state is AlarmsUninitialized) {
+        print("AlarmsUninitialized");
+      } else if (state is AlarmsEmptyState) {
+        print("AlarmsEmptyState");
+      }
       return Scaffold(
           appBar: AppBar(
             title: Text("Second Route"),
           ),
           body: Container(
               alignment: Alignment.topCenter,
-              child: _listView(context, state)));
+              child: _listView(context, Alarm(1, true, DateTime.now(), {}))));
     });
   }
 
-  Widget _listView(BuildContext context, AlarmState state) {
+  Widget _listView(BuildContext context, Alarm alarm) {
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
@@ -30,9 +37,9 @@ class SecondRoute extends StatelessWidget {
               border: Border(bottom: BorderSide(color: Colors.black12)),
             ),
             height: rowHeight,
-            child: buildRow(state.alarm)),
+            child: buildRow(alarm)),
         InkWell(
-            onTap: () => showRepeatDialog(context, state.alarm),
+            onTap: () => showRepeatDialog(context, alarm),
             child: Container(
                 decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.black12)),
