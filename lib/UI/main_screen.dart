@@ -16,7 +16,7 @@ class MainScreen extends StatelessWidget {
           title: const Text('Alarms'),
         ),
         body: Center(
-          child: _listView(Alarm(1, true, DateTime.now(), {})),
+          child: _listView(Alarm()),
         ),
         floatingActionButton: _add(context),
       );

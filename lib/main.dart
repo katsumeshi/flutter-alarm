@@ -1,4 +1,5 @@
 import 'package:alarm/BLoC/alarm_bloc.dart';
+import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,7 +9,7 @@ void main() {
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider<AlarmsBloc>(
-        create: (context) => AlarmsBloc(),
+        create: (context) => AlarmsBloc()..add(LoadAlarms()),
       ),
     ],
     child: MyApp(),

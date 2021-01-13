@@ -8,7 +8,7 @@ abstract class AlarmsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AlarmsLoadSuccess extends AlarmsEvent {}
+class LoadAlarms extends AlarmsEvent {}
 
 class AlarmAdded extends AlarmsEvent {
   final Alarm alarm;
@@ -22,16 +22,16 @@ class AlarmAdded extends AlarmsEvent {
   String toString() => 'AlarmAdded { Alarm: $alarm }';
 }
 
-class AlarmUpdated extends AlarmsEvent {
-  final Alarm alarm;
+class UpdateAlarm extends AlarmsEvent {
+  final Alarm updatedAlarm;
 
-  const AlarmUpdated(this.alarm);
-
-  @override
-  List<Object> get props => [Alarm];
+  const UpdateAlarm(this.updatedAlarm);
 
   @override
-  String toString() => 'AlarmUpdated { Alarm: $Alarm }';
+  List<Object> get props => [updatedAlarm];
+
+  @override
+  String toString() => 'UpdateAlarm { Alarm: $updatedAlarm }';
 }
 
 class AlarmDeleted extends AlarmsEvent {

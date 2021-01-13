@@ -13,18 +13,13 @@ class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
-      if (state is AlarmsUninitialized) {
-        print("AlarmsUninitialized");
-      } else if (state is AlarmsEmptyState) {
-        print("AlarmsEmptyState");
-      }
       return Scaffold(
           appBar: AppBar(
             title: Text("Second Route"),
           ),
           body: Container(
               alignment: Alignment.topCenter,
-              child: _listView(context, Alarm(1, true, DateTime.now(), {}))));
+              child: _listView(context, (state as AlarmsLoaded).alarms[0])));
     });
   }
 
@@ -84,42 +79,44 @@ class SecondRoute extends StatelessWidget {
   }
 
   void showRepeatDialog(BuildContext context, Alarm alarm) {
-    // final bloc = BlocProvider.of<AlarmBloc>(context);
+    final bloc = BlocProvider.of<AlarmsBloc>(context);
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: alarm.days.entries
-                  .map((e) => InkWell(
-                        onTap: () =>
-                            {}, //bloc.updateDays(bloc.alarms[0], e.key),
-                        child: Row(children: [
-                          Checkbox(value: e.value, onChanged: null),
-                          Spacer(),
-                          Text(e.key),
-                        ]),
-                      ))
-                  .toList()),
-          actions: <Widget>[
-            // ボタン領域
-            FlatButton(
-              child: Text("Cancel"),
-              onPressed: () => Navigator.pop(context),
-            ),
-            FlatButton(
-              child: Text("OK"),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        );
-
-        // return BlocProvider<AlarmBloc>.value(
-        //   value: bloc, //
-        //   child: dialog,
-        // );
-      },
-    );
+        context: context,
+        builder: (context) {
+          Map<String, bool> days =
+              defaultDays.map((key, value) => MapEntry(key, value));
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: days.entries
+                      .map((e) => InkWell(
+                            onTap: () {
+                              setState(() {
+                                days[e.key] = !days[e.key];
+                              });
+                            },
+                            child: Row(children: [
+                              Checkbox(value: e.value, onChanged: null),
+                              Spacer(),
+                              Text(e.key),
+                            ]),
+                          ))
+                      .toList()),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      bloc;
+                      Navigator.pop(context);
+                    }),
+              ],
+            );
+          });
+        });
   }
 }

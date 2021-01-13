@@ -10,17 +10,17 @@ abstract class AlarmsState extends Equatable {
 
 class AlarmsUninitialized extends AlarmsState {}
 
-// class AlarmsLoadSuccesss extends AlarmsState {
-//   final List<Alarm> alarms;
+class AlarmsLoaded extends AlarmsState {
+  final List<Alarm> alarms;
 
-//   const AlarmsLoadSuccesss([this.alarms = const []]);
+  const AlarmsLoaded([this.alarms = const []]);
 
-//   @override
-//   List<Object> get props => [alarms];
+  @override
+  List<Object> get props => [alarms];
 
-//   @override
-//   String toString() => 'AlarmsLoadSuccess { Alarms: $alarms }';
-// }
+  @override
+  String toString() => 'AlarmsLoaded { alarms: $alarms }';
+}
 
 class AlarmsLoadFailure extends AlarmsState {}
 

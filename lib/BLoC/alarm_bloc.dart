@@ -4,16 +4,6 @@ import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/DataLayar/alarm.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-const days = {
-  "Monday": false,
-  "Tuesday": false,
-  "Wednesday": false,
-  "Thursday": false,
-  "Friday": false,
-  "Saturday": false,
-  "Sunday": false
-};
-
 class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
   StreamSubscription<Alarm> _alarmSubscription;
 
@@ -21,40 +11,32 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
 
   @override
   Stream<AlarmsState> mapEventToState(AlarmsEvent event) async* {
-    if (event is AlarmsLoadSuccess) {
-      yield* _mapAlarmsLoadedToState();
-    } else if (event is AlarmUpdated) {
+    if (event is LoadAlarms) {
+      yield* _mapLoadAlarmsToState();
+    } else if (event is UpdateAlarm) {
       yield* _mapAlarmUpdatedToState(event);
     }
   }
 
-  Stream<AlarmsState> _mapAlarmsLoadedToState() async* {
-    List<AlarmsState> alarms;
+  Stream<AlarmsState> _mapLoadAlarmsToState() async* {
     try {
-      // if (event is CountrySelectedEvent) {
-      //   players = await playerRepository
-      //       .fetchPlayersByCountry(event.nationModel.countryId);
-      // } else if (event is SearchTextChangedEvent) {
-      //   players = await playerRepository.fetchPlayersByName(event.searchTerm);
-      // }
-      if (alarms.length == 0) {
-        yield AlarmsEmptyState();
-      } else {
-        // yield PlayerFetchedState(players: players);
-      }
+      final alarms = [Alarm()];
+      yield AlarmsLoaded(
+        alarms,
+      );
     } catch (_) {
       // yield PlayerErrorState();
     }
   }
 
-  Stream<AlarmsState> _mapAlarmUpdatedToState(AlarmUpdated event) async* {
-    if (state is AlarmsLoadSuccess) {
-      // final List<Alarm> updatedAlarms =
-      //     (state as AlarmsLoadSuccesss).alarms.map((alarm) {
-      //   return alarm.id == event.alarm.id ? event.alarm : alarm;
-      // }).toList();
-      // yield AlarmsLoadSuccesss(updatedAlarms);
-      // _saveAlarms(updatedAlarms);
+  Stream<AlarmsState> _mapAlarmUpdatedToState(UpdateAlarm event) async* {
+    if (state is AlarmsLoaded) {
+      final updatedTodos = (state as AlarmsLoaded).alarms.map((alarm) {
+        return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
+      }).toList();
+      // print(updatedTodos);
+      yield AlarmsLoaded(updatedTodos);
+      // await _saveTodos(updatedTodos);
     }
   }
 
