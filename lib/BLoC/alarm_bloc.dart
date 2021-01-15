@@ -6,8 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
   StreamSubscription<Alarm> _alarmSubscription;
+  List<Alarm> alarms = [Alarm()];
 
   AlarmsBloc() : super(AlarmsUninitialized());
+
+  // AlarmsBloc([]);
 
   @override
   Stream<AlarmsState> mapEventToState(AlarmsEvent event) async* {
@@ -20,7 +23,9 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
 
   Stream<AlarmsState> _mapLoadAlarmsToState() async* {
     try {
-      final alarms = [Alarm()];
+      alarms.forEach((element) {
+        print(element.days);
+      });
       yield AlarmsLoaded(
         alarms,
       );
@@ -30,14 +35,29 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
   }
 
   Stream<AlarmsState> _mapAlarmUpdatedToState(UpdateAlarm event) async* {
+    // print("--------");
+    // print(event.updatedAlarm.days);
     if (state is AlarmsLoaded) {
+      //   final updatedTodos = (state as AlarmsLoaded).alarms.map((alarm) {
+      //     print(alarm);
+      //     return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
+      //   }).toList();
+      //   // print(updatedTodos);
+      //   yield AlarmsLoaded(updatedTodos);
+
+      //   alarms.forEach((element) {
+      //     print(element.days);
+      //   });
+      //   // await _saveTodos(updatedTodos);
+
       final updatedTodos = (state as AlarmsLoaded).alarms.map((alarm) {
+        print(alarm);
         return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
       }).toList();
-      // print(updatedTodos);
       yield AlarmsLoaded(updatedTodos);
-      // await _saveTodos(updatedTodos);
+      print("ii[[[[date");
     }
+    // print(alarms[0].days);
   }
 
   Future _saveAlarms(List<Alarm> todos) {

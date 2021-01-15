@@ -13,6 +13,8 @@ class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
+      print("hogehoge loading");
+      print((state as AlarmsLoaded).alarms[0].days);
       return Scaffold(
           appBar: AppBar(
             title: Text("Second Route"),
@@ -111,7 +113,7 @@ class SecondRoute extends StatelessWidget {
                 FlatButton(
                     child: Text("OK"),
                     onPressed: () {
-                      bloc;
+                      bloc.add(UpdateAlarm(alarm.copyWith(days: days)));
                       Navigator.pop(context);
                     }),
               ],

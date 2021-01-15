@@ -24,16 +24,12 @@ class Alarm extends Equatable {
 
   Alarm(
       {this.id = 0, this.active = false, DateTime time, Map<String, bool> days})
-      : time = DateTime.now(),
-        days = defaultDays;
+      : this.time = time ?? DateTime.now(),
+        this.days = days ?? defaultDays;
 
   AlarmEntity toEntity() {
     return AlarmEntity(id, active, time, days);
   }
-
-  // static Alarm fromEntity(AlarmEntity entity) {
-  //   return Alarm(entity.id, entity.active, entity.time, entity.days);
-  // }
 
   Alarm copyWith({int id, bool active, DateTime time, Map<String, bool> days}) {
     return Alarm(
