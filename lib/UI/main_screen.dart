@@ -16,20 +16,20 @@ class MainScreen extends StatelessWidget {
           title: const Text('Alarms'),
         ),
         body: Center(
-          child: _listView(Alarm()),
+          child: _listView(context, Alarm()),
         ),
         floatingActionButton: _add(context),
       );
     });
   }
 
-  Widget _listView(Alarm alarm) {
+  Widget _listView(BuildContext context, Alarm alarm) {
     return ListView.separated(
         separatorBuilder: (context, index) => Divider(),
         itemCount: 1,
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
-          return buildRow(alarm);
+          return buildRow(context);
         });
   }
 

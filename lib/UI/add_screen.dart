@@ -1,9 +1,9 @@
 import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
+import 'package:alarm/BLoC/alarm_bloc.dart';
 import 'package:alarm/DataLayar/alarm.dart';
 import 'package:alarm/UI/alarm_row.dart';
 import 'package:flutter/material.dart';
-import 'package:alarm/BLoC/alarm_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SecondRoute extends StatelessWidget {
@@ -34,7 +34,7 @@ class SecondRoute extends StatelessWidget {
               border: Border(bottom: BorderSide(color: Colors.black12)),
             ),
             height: rowHeight,
-            child: buildRow(alarm)),
+            child: buildRow(context)),
         InkWell(
             onTap: () => showRepeatDialog(context, alarm),
             child: Container(
@@ -86,7 +86,8 @@ class SecondRoute extends StatelessWidget {
         context: context,
         builder: (context) {
           Map<String, bool> days =
-              defaultDays.map((key, value) => MapEntry(key, value));
+              alarm.days.map((key, value) => MapEntry(key, value)) ??
+                  defaultDays.map((key, value) => MapEntry(key, value));
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Column(
