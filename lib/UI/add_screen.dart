@@ -15,6 +15,7 @@ class SecondRoute extends StatelessWidget {
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
       print("hogehoge loading");
       print((state as AlarmsLoaded).alarms[0].days);
+      print((state as AlarmsLoaded).alarms[0].note);
       return Scaffold(
           appBar: AppBar(
             title: Text("Second Route"),
@@ -26,6 +27,7 @@ class SecondRoute extends StatelessWidget {
   }
 
   Widget _listView(BuildContext context, Alarm alarm) {
+    final bloc = BlocProvider.of<AlarmsBloc>(context);
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
@@ -72,9 +74,12 @@ class SecondRoute extends StatelessWidget {
           margin: const EdgeInsets.only(left: margin, right: margin),
           height: rowHeight,
           alignment: Alignment.centerLeft,
-          child: TextField(
+          child: TextFormField(
+              initialValue: alarm.note,
+              onFieldSubmitted: (String text) =>
+                  {bloc.add(UpdateAlarm(alarm.copyWith(note: text)))},
               decoration:
-                  InputDecoration(border: InputBorder.none, hintText: 'Label')),
+                  InputDecoration(border: InputBorder.none, hintText: 'Note')),
         )
       ],
     );

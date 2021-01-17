@@ -10,8 +10,6 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
 
   AlarmsBloc() : super(AlarmsUninitialized());
 
-  // AlarmsBloc([]);
-
   @override
   Stream<AlarmsState> mapEventToState(AlarmsEvent event) async* {
     if (event is LoadAlarms) {
@@ -35,35 +33,12 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
   }
 
   Stream<AlarmsState> _mapAlarmUpdatedToState(UpdateAlarm event) async* {
-    // print("--------");
-    // print(event.updatedAlarm.days);
     if (state is AlarmsLoaded) {
-      //   final updatedTodos = (state as AlarmsLoaded).alarms.map((alarm) {
-      //     print(alarm);
-      //     return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
-      //   }).toList();
-      //   // print(updatedTodos);
-      //   yield AlarmsLoaded(updatedTodos);
-
-      //   alarms.forEach((element) {
-      //     print(element.days);
-      //   });
-      //   // await _saveTodos(updatedTodos);
-
       final updatedTodos = (state as AlarmsLoaded).alarms.map((alarm) {
         print(alarm);
         return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
       }).toList();
       yield AlarmsLoaded(updatedTodos);
-      print("ii[[[[date");
     }
-    // print(alarms[0].days);
-  }
-
-  Future _saveAlarms(List<Alarm> todos) {
-    return Future.value(todos);
-    // return todosRepository.saveTodos(
-    //   todos.map((todo) => todo.toEntity()).toList(),
-    // );
   }
 }

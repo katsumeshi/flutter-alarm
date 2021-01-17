@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 
 const defaultDays = {
@@ -15,33 +17,57 @@ class Alarm extends Equatable {
   final bool active;
   final DateTime time;
   final Map<String, bool> days;
+  final String note;
 
   Alarm.fromJson(Map json)
       : id = json['id'],
         active = json['active'],
         time = json['title'],
-        days = json['days'];
+        days = json['days'],
+        note = json['note'];
 
   Alarm(
-      {this.id = 0, this.active = false, DateTime time, Map<String, bool> days})
+      {this.id = 0,
+      this.active = false,
+      DateTime time,
+      Map<String, bool> days,
+      this.note = ""})
       : this.time = time ?? DateTime.now(),
         this.days = days ?? defaultDays;
 
   AlarmEntity toEntity() {
-    return AlarmEntity(id, active, time, days);
+    return AlarmEntity(id, active, time, days, note);
   }
 
-  Alarm copyWith({int id, bool active, DateTime time, Map<String, bool> days}) {
+  Alarm copyWith(
+      {int id,
+      bool active,
+      DateTime time,
+      Map<String, bool> days,
+      String note}) {
     return Alarm(
-      id: id ?? this.id,
-      active: active ?? this.active,
-      time: time ?? this.time,
-      days: days ?? this.days,
-    );
+        id: id ?? this.id,
+        active: active ?? this.active,
+        time: time ?? this.time,
+        days: days ?? this.days,
+        note: note ?? this.note);
+  }
+
+  String toDaysString() {
+    var ret = "";
+    days.forEach((key, value) {
+      if (value == true) {
+        ret += key.substring(0, 3) + ", ";
+      }
+    });
+    if (ret.length == 0) {
+      return ret;
+    }
+    return ret.substring(0, ret.length - 2);
   }
 
   @override
-  List<Object> get props => [id, active, time, days];
+  List<Object> get props => [id, active, time, days, note];
 }
 
 class AlarmEntity extends Equatable {
@@ -49,9 +75,10 @@ class AlarmEntity extends Equatable {
   final bool active;
   final DateTime time;
   final Map<String, bool> days;
+  final String note;
 
-  const AlarmEntity(this.id, this.active, this.time, this.days);
+  const AlarmEntity(this.id, this.active, this.time, this.days, this.note);
 
   @override
-  List<Object> get props => [id, active, time, days];
+  List<Object> get props => [id, active, time, days, note];
 }

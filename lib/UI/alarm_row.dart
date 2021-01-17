@@ -15,7 +15,7 @@ Widget buildRow(BuildContext context) {
         value: alarm.active,
         activeColor: Colors.orange,
         activeTrackColor: Colors.red,
-        onChanged: (value) => print(value),
+        onChanged: (v) => {bloc.add(UpdateAlarm(alarm.copyWith(active: v)))},
       ),
       Expanded(
           child: InkWell(
@@ -39,7 +39,7 @@ Widget buildRow(BuildContext context) {
                       ),
                       textAlign: TextAlign.justify)
                 ]),
-                Text('Tue, Wed, Thu',
+                Text(alarm.toDaysString(),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
