@@ -8,8 +8,6 @@ abstract class AlarmsState extends Equatable {
   List<Object> get props => [];
 }
 
-class AlarmsUninitialized extends AlarmsState {}
-
 class AlarmsLoaded extends AlarmsState {
   final List<Alarm> alarms;
 
@@ -23,5 +21,3 @@ class AlarmsLoaded extends AlarmsState {
 }
 
 class AlarmsLoadFailure extends AlarmsState {}
-
-class AlarmsEmptyState extends AlarmsState {}

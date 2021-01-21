@@ -2,7 +2,7 @@ import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/BLoC/alarm_bloc.dart';
 import 'package:alarm/DataLayar/alarm.dart';
-import 'package:alarm/UI/alarm_row.dart';
+import 'package:alarm/UI/comonents/alarm_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,17 +12,29 @@ class SecondRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final alarm = ModalRoute.of(context).settings.arguments as Alarm;
+    final bloc = BlocProvider.of<AlarmsBloc>(context);
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
-      print("hogehoge loading");
-      print((state as AlarmsLoaded).alarms[0].days);
-      print((state as AlarmsLoaded).alarms[0].note);
+      final alarms = (state as AlarmsLoaded).alarms;
       return Scaffold(
           appBar: AppBar(
-            title: Text("Second Route"),
-          ),
+              title: Text("Second Route"),
+              leading: IconButton(
+                icon: Icon(Icons.chevron_left, size: 30),
+                onPressed: () {
+                  final ret = alarms.firstWhere((e) => e.id == alarm.id,
+                      orElse: () => null);
+                  if (ret == null) {
+                    bloc.add(AddAlarm(alarm));
+                  } else {
+                    bloc.add(UpdateAlarm(alarm));
+                  }
+                  Navigator.of(context).pop();
+                },
+              )),
           body: Container(
               alignment: Alignment.topCenter,
-              child: _listView(context, (state as AlarmsLoaded).alarms[0])));
+              child: _listView(context, alarm)));
     });
   }
 
@@ -36,7 +48,7 @@ class SecondRoute extends StatelessWidget {
               border: Border(bottom: BorderSide(color: Colors.black12)),
             ),
             height: rowHeight,
-            child: buildRow(context)),
+            child: buildRow(context, alarm)),
         InkWell(
             onTap: () => showRepeatDialog(context, alarm),
             child: Container(
@@ -114,7 +126,9 @@ class SecondRoute extends StatelessWidget {
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
                 FlatButton(
                     child: Text("OK"),

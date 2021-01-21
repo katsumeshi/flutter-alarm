@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:uuid/uuid.dart';
 import 'package:equatable/equatable.dart';
 
 const defaultDays = {
@@ -12,8 +11,10 @@ const defaultDays = {
   "Sunday": false
 };
 
+final uuid = Uuid();
+
 class Alarm extends Equatable {
-  final int id;
+  final String id;
   final bool active;
   final DateTime time;
   final Map<String, bool> days;
@@ -27,12 +28,13 @@ class Alarm extends Equatable {
         note = json['note'];
 
   Alarm(
-      {this.id = 0,
+      {String id,
       this.active = false,
       DateTime time,
       Map<String, bool> days,
       this.note = ""})
-      : this.time = time ?? DateTime.now(),
+      : this.id = id ?? uuid.v1(),
+        this.time = time ?? DateTime.now(),
         this.days = days ?? defaultDays;
 
   AlarmEntity toEntity() {
@@ -40,7 +42,7 @@ class Alarm extends Equatable {
   }
 
   Alarm copyWith(
-      {int id,
+      {String id,
       bool active,
       DateTime time,
       Map<String, bool> days,
@@ -71,7 +73,7 @@ class Alarm extends Equatable {
 }
 
 class AlarmEntity extends Equatable {
-  final int id;
+  final String id;
   final bool active;
   final DateTime time;
   final Map<String, bool> days;

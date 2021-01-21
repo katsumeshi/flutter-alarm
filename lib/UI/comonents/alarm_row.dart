@@ -1,15 +1,15 @@
 import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
+import 'package:alarm/DataLayar/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:alarm/BLoC/alarm_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-Widget buildRow(BuildContext context) {
+Widget buildRow(BuildContext context, Alarm alarm) {
   final bloc = BlocProvider.of<AlarmsBloc>(context);
   return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
-    final alarm = (state as AlarmsLoaded).alarms[0];
     return Row(mainAxisSize: MainAxisSize.min, children: [
       Switch(
         value: alarm.active,
@@ -45,7 +45,11 @@ Widget buildRow(BuildContext context) {
                       fontSize: 18,
                     ))
               ]))),
-      Icon(Icons.more_horiz)
+      InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed('/second', arguments: alarm);
+          },
+          child: Column(children: [Icon(Icons.more_horiz)]))
     ]);
   });
 }

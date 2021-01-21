@@ -10,10 +10,10 @@ abstract class AlarmsEvent extends Equatable {
 
 class LoadAlarms extends AlarmsEvent {}
 
-class AlarmAdded extends AlarmsEvent {
+class AddAlarm extends AlarmsEvent {
   final Alarm alarm;
 
-  const AlarmAdded(this.alarm);
+  const AddAlarm(this.alarm);
 
   @override
   List<Object> get props => [alarm];

@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
   StreamSubscription<Alarm> _alarmSubscription;
-  List<Alarm> alarms = [Alarm()];
+  List<Alarm> alarms = [];
 
-  AlarmsBloc() : super(AlarmsUninitialized());
+  AlarmsBloc() : super(AlarmsLoaded());
 
   @override
   Stream<AlarmsState> mapEventToState(AlarmsEvent event) async* {
@@ -16,6 +16,8 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
       yield* _mapLoadAlarmsToState();
     } else if (event is UpdateAlarm) {
       yield* _mapAlarmUpdatedToState(event);
+    } else if (event is AddAlarm) {
+      yield* _mapAlarmAddedToState(event);
     }
   }
 
@@ -39,6 +41,14 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
         return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
       }).toList();
       yield AlarmsLoaded(updatedTodos);
+    }
+  }
+
+  Stream<AlarmsState> _mapAlarmAddedToState(AddAlarm event) async* {
+    if (state is AlarmsLoaded) {
+      final alarms = (state as AlarmsLoaded).alarms.map((e) => e).toList();
+      alarms.add(event.alarm);
+      yield AlarmsLoaded(alarms);
     }
   }
 }
