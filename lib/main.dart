@@ -1,18 +1,11 @@
 import 'package:alarm/BLoC/alarm_bloc.dart';
 import 'package:alarm/BLoC/alarms_event.dart';
-import 'package:alarm/UI/add_screen.dart';
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:alarm/UI/edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'UI/main_screen.dart';
 
-var advancedPlayer = AudioPlayer();
-final audioCache = AudioCache(fixedPlayer: advancedPlayer);
 void main() {
-  // var advancedPlayer = AudioPlayer();
-  // final audioCache = AudioCache();
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider<AlarmsBloc>(
@@ -30,7 +23,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => MainScreen(),
-        '/second': (BuildContext context) => SecondRoute(),
+        '/add': (BuildContext context) => SecondRoute(Mode.Add),
+        '/edit': (BuildContext context) => SecondRoute(Mode.Edit),
       },
       title: 'Restaurant Finder',
       theme: ThemeData(

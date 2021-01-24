@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/DataLayar/alarm.dart';
+import 'package:alarm/UI/comonents/cron_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
-  StreamSubscription<Alarm> _alarmSubscription;
   List<Alarm> alarms = [];
 
   AlarmsBloc() : super(AlarmsLoaded());
@@ -18,6 +18,8 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
       yield* _mapAlarmUpdatedToState(event);
     } else if (event is AddAlarm) {
       yield* _mapAlarmAddedToState(event);
+    } else if (event is DeleteAlarm) {
+      yield* _mapAlarmDeletedToState(event);
     }
   }
 
@@ -26,9 +28,6 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
       alarms.forEach((element) {
         print(element.days);
       });
-      yield AlarmsLoaded(
-        alarms,
-      );
     } catch (_) {
       // yield PlayerErrorState();
     }
@@ -36,11 +35,13 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
 
   Stream<AlarmsState> _mapAlarmUpdatedToState(UpdateAlarm event) async* {
     if (state is AlarmsLoaded) {
-      final updatedTodos = (state as AlarmsLoaded).alarms.map((alarm) {
+      final alarms = (state as AlarmsLoaded).alarms.map((alarm) {
         print(alarm);
         return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
       }).toList();
-      yield AlarmsLoaded(updatedTodos);
+
+      ClonManager().addAlarms(alarms);
+      yield AlarmsLoaded(alarms);
     }
   }
 
@@ -48,6 +49,20 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
     if (state is AlarmsLoaded) {
       final alarms = (state as AlarmsLoaded).alarms.map((e) => e).toList();
       alarms.add(event.alarm);
+      ClonManager().addAlarms(alarms);
+      yield AlarmsLoaded(alarms);
+    }
+  }
+
+  Stream<AlarmsState> _mapAlarmDeletedToState(DeleteAlarm event) async* {
+    if (state is AlarmsLoaded) {
+      final alarms = (state as AlarmsLoaded)
+          .alarms
+          .toList()
+          .where((e) => e.id != event.alarm.id)
+          .toList();
+      print(alarms);
+      ClonManager().addAlarms(alarms);
       yield AlarmsLoaded(alarms);
     }
   }

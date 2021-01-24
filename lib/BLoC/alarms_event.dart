@@ -34,16 +34,16 @@ class UpdateAlarm extends AlarmsEvent {
   String toString() => 'UpdateAlarm { Alarm: $updatedAlarm }';
 }
 
-class AlarmDeleted extends AlarmsEvent {
+class DeleteAlarm extends AlarmsEvent {
   final Alarm alarm;
 
-  const AlarmDeleted(this.alarm);
+  const DeleteAlarm(this.alarm);
 
   @override
   List<Object> get props => [alarm];
 
   @override
-  String toString() => 'AlarmDeleted { Alarm: $alarm }';
+  String toString() => 'DeleteTodo { todo: $alarm }';
 }
 
 class ClearCompleted extends AlarmsEvent {}

@@ -6,9 +6,16 @@ import 'package:alarm/UI/comonents/alarm_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+enum Mode { Add, Edit }
+
 class SecondRoute extends StatelessWidget {
   static const rowHeight = 70.0;
   static const margin = 16.0;
+  Mode mode;
+
+  SecondRoute(Mode mode) {
+    this.mode = mode;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +24,41 @@ class SecondRoute extends StatelessWidget {
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
       final alarms = (state as AlarmsLoaded).alarms;
       alarm = alarms.firstWhere((e) => e.id == alarm.id, orElse: () => Alarm());
+
       return Scaffold(
           appBar: AppBar(
-              title: Text("Second Route"),
-              leading: IconButton(
-                icon: Icon(Icons.chevron_left, size: 30),
-                onPressed: () {
-                  bloc.add(UpdateAlarm(alarm));
-                  Navigator.of(context).pop();
-                },
-              )),
+            title: Text("Second Route"),
+            leading: IconButton(
+              icon: Icon(Icons.chevron_left, size: 30),
+              onPressed: () {
+                bloc.add(UpdateAlarm(alarm));
+                Navigator.of(context).pop();
+              },
+            ),
+            actions: _trailActions(context, alarm),
+          ),
           body: Container(
               alignment: Alignment.topCenter,
               child: _listView(context, alarm)));
     });
+  }
+
+  List<Widget> _trailActions(BuildContext context, Alarm alarm) {
+    final bloc = BlocProvider.of<AlarmsBloc>(context);
+    return this.mode == Mode.Add
+        ? [SizedBox.shrink()]
+        : [
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                bloc.add(DeleteAlarm(alarm));
+                Navigator.of(context).pop();
+              },
+            )
+          ];
   }
 
   Widget _listView(BuildContext context, Alarm alarm) {
@@ -43,9 +71,9 @@ class SecondRoute extends StatelessWidget {
               border: Border(bottom: BorderSide(color: Colors.black12)),
             ),
             height: rowHeight,
-            child: buildRow(context, alarm)),
+            child: buildRow(context, alarm, Mode.Edit)),
         InkWell(
-            onTap: () => showRepeatDialog(context, alarm),
+            onTap: () => _showRepeatDialog(context, alarm),
             child: Container(
                 decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.black12)),
@@ -56,31 +84,6 @@ class SecondRoute extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [Text("Repeat"), Text("Never")]))),
-        Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.black12)),
-            ),
-            height: rowHeight,
-            padding: const EdgeInsets.only(left: margin, right: margin),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [Text("Ringtone"), Text("Default(Bright Morning)")])),
-        Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.black12)),
-            ),
-            padding: const EdgeInsets.only(left: margin, right: margin),
-            height: rowHeight,
-            child: Row(children: [
-              Text("Gentle pre-alarm"),
-              Spacer(),
-              Checkbox(
-                  value: alarm.gentle,
-                  onChanged: (value) {
-                    bloc.add(UpdateAlarm(alarm.copyWith(gentle: value)));
-                  })
-            ])),
         Container(
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.black12)),
@@ -99,7 +102,7 @@ class SecondRoute extends StatelessWidget {
     );
   }
 
-  void showRepeatDialog(BuildContext context, Alarm alarm) {
+  void _showRepeatDialog(BuildContext context, Alarm alarm) {
     final bloc = BlocProvider.of<AlarmsBloc>(context);
     showDialog(
         context: context,

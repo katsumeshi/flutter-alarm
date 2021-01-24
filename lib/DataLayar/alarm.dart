@@ -31,7 +31,7 @@ class Alarm extends Equatable {
 
   Alarm(
       {String id,
-      this.active = false,
+      this.active = true,
       DateTime time,
       Map<String, bool> days,
       this.gentle = false,

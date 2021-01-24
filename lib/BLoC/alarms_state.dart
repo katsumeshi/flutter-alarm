@@ -19,5 +19,3 @@ class AlarmsLoaded extends AlarmsState {
   @override
   String toString() => 'AlarmsLoaded { alarms: $alarms }';
 }
-
-class AlarmsLoadFailure extends AlarmsState {}
