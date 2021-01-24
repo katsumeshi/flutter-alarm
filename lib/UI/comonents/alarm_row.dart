@@ -25,31 +25,42 @@ Widget buildRow(BuildContext context, Alarm alarm) {
                   bloc.add(UpdateAlarm(alarm.copyWith(time: time)));
                 }, currentTime: alarm.time, locale: LocaleType.en);
               },
-              child: Column(children: [
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Text(DateFormat("hh:mm").format(alarm.time),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 35,
-                      )),
-                  Text(DateFormat("a").format(alarm.time),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                      textAlign: TextAlign.justify)
-                ]),
-                Text(alarm.toDaysString(),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                    ))
-              ]))),
-      InkWell(
-          onTap: () {
-            Navigator.of(context).pushNamed('/second', arguments: alarm);
-          },
-          child: Column(children: [Icon(Icons.more_horiz)]))
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text(DateFormat("hh:mm").format(alarm.time),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 35,
+                          )),
+                      Text(DateFormat("a").format(alarm.time),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                          textAlign: TextAlign.justify)
+                    ]),
+                    _daysWidget(alarm)
+                  ]))),
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        InkWell(
+            onTap: () {
+              Navigator.of(context).pushNamed('/second', arguments: alarm);
+            },
+            child: Icon(Icons.more_horiz))
+      ]),
     ]);
   });
+}
+
+Widget _daysWidget(Alarm alarm) {
+  final dayString = alarm.toDaysString();
+  return dayString.isEmpty
+      ? SizedBox.shrink()
+      : Text(dayString,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ));
 }

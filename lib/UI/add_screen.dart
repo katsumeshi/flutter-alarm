@@ -12,23 +12,18 @@ class SecondRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alarm = ModalRoute.of(context).settings.arguments as Alarm;
+    var alarm = ModalRoute.of(context).settings.arguments as Alarm;
     final bloc = BlocProvider.of<AlarmsBloc>(context);
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
       final alarms = (state as AlarmsLoaded).alarms;
+      alarm = alarms.firstWhere((e) => e.id == alarm.id, orElse: () => Alarm());
       return Scaffold(
           appBar: AppBar(
               title: Text("Second Route"),
               leading: IconButton(
                 icon: Icon(Icons.chevron_left, size: 30),
                 onPressed: () {
-                  final ret = alarms.firstWhere((e) => e.id == alarm.id,
-                      orElse: () => null);
-                  if (ret == null) {
-                    bloc.add(AddAlarm(alarm));
-                  } else {
-                    bloc.add(UpdateAlarm(alarm));
-                  }
+                  bloc.add(UpdateAlarm(alarm));
                   Navigator.of(context).pop();
                 },
               )),
@@ -77,8 +72,15 @@ class SecondRoute extends StatelessWidget {
             ),
             padding: const EdgeInsets.only(left: margin, right: margin),
             height: rowHeight,
-            child:
-                Row(children: [Text("Gentle pre-alarm"), Spacer(), Text("□")])),
+            child: Row(children: [
+              Text("Gentle pre-alarm"),
+              Spacer(),
+              Checkbox(
+                  value: alarm.gentle,
+                  onChanged: (value) {
+                    bloc.add(UpdateAlarm(alarm.copyWith(gentle: value)));
+                  })
+            ])),
         Container(
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.black12)),
