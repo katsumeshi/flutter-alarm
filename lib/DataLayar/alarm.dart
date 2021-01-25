@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:uuid/uuid.dart';
 import 'package:equatable/equatable.dart';
 
@@ -18,15 +20,13 @@ class Alarm extends Equatable {
   final bool active;
   final DateTime time;
   final Map<String, bool> days;
-  final bool gentle;
   final String note;
 
   Alarm.fromJson(Map json)
       : id = json['id'],
         active = json['active'],
-        time = json['title'],
-        days = json['days'],
-        gentle = json['gentle'],
+        time = DateTime.parse(json['time']),
+        days = (json['days'] as LinkedHashMap).cast(),
         note = json['note'];
 
   Alarm(
@@ -34,14 +34,13 @@ class Alarm extends Equatable {
       this.active = true,
       DateTime time,
       Map<String, bool> days,
-      this.gentle = false,
       this.note = ""})
       : this.id = id ?? uuid.v1(),
         this.time = time ?? DateTime.now().add(Duration(minutes: 1)),
         this.days = days ?? defaultDays;
 
   AlarmEntity toEntity() {
-    return AlarmEntity(id, active, time, days, gentle, note);
+    return AlarmEntity(id, active, time, days, note);
   }
 
   Alarm copyWith(
@@ -49,15 +48,23 @@ class Alarm extends Equatable {
       bool active,
       DateTime time,
       Map<String, bool> days,
-      bool gentle,
       String note}) {
     return Alarm(
         id: id ?? this.id,
         active: active ?? this.active,
         time: time ?? this.time,
         days: days ?? this.days,
-        gentle: gentle ?? this.gentle,
         note: note ?? this.note);
+  }
+
+  Map toJsonMap() {
+    return {
+      "id": id,
+      "active": active,
+      "time": time.toIso8601String(),
+      "days": days,
+      "note": note
+    };
   }
 
   String toDaysString() {
@@ -105,7 +112,7 @@ class Alarm extends Equatable {
   }
 
   @override
-  List<Object> get props => [id, active, time, days, gentle, note];
+  List<Object> get props => [id, active, time, days, note];
 }
 
 class AlarmEntity extends Equatable {
@@ -113,12 +120,10 @@ class AlarmEntity extends Equatable {
   final bool active;
   final DateTime time;
   final Map<String, bool> days;
-  final bool gentle;
   final String note;
 
-  const AlarmEntity(
-      this.id, this.active, this.time, this.days, this.gentle, this.note);
+  const AlarmEntity(this.id, this.active, this.time, this.days, this.note);
 
   @override
-  List<Object> get props => [id, active, time, days, gentle, note];
+  List<Object> get props => [id, active, time, days, note];
 }

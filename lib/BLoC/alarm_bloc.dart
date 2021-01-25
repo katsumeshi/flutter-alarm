@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/DataLayar/alarm.dart';
 import 'package:alarm/UI/comonents/audio_player.dart';
 import 'package:alarm/UI/comonents/cron_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
   List<Alarm> alarms = [];
@@ -24,7 +26,15 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
     }
   }
 
-  Stream<AlarmsState> _mapLoadAlarmsToState() async* {}
+  Stream<AlarmsState> _mapLoadAlarmsToState() async* {
+    try {
+      final alarms = await _loadAlarms();
+      ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
+      yield AlarmsLoaded(alarms);
+    } catch (err) {
+      print(err);
+    }
+  }
 
   Stream<AlarmsState> _mapAlarmUpdatedToState(UpdateAlarm event) async* {
     if (state is AlarmsLoaded) {
@@ -34,6 +44,7 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
 
       ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
       yield AlarmsLoaded(alarms);
+      await _saveAlarms(alarms);
     }
   }
 
@@ -43,6 +54,7 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
       alarms.add(event.alarm);
       ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
       yield AlarmsLoaded(alarms);
+      await _saveAlarms(alarms);
     }
   }
 
@@ -55,6 +67,22 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
           .toList();
       ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
       yield AlarmsLoaded(alarms);
+      await _saveAlarms(alarms);
     }
+  }
+
+  Future _saveAlarms(List<Alarm> alarms) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final json = jsonEncode(alarms.map((e) => e.toJsonMap()).toList());
+    prefs.setString("storage", json);
+  }
+
+  Future<List<Alarm>> _loadAlarms() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString("storage");
+    if (json == null) return [];
+    final list = jsonDecode(json) as List;
+    print(list.map((e) => Alarm.fromJson(e)));
+    return list.map((e) => Alarm.fromJson(e)).toList();
   }
 }
