@@ -2,13 +2,13 @@ import 'package:uuid/uuid.dart';
 import 'package:equatable/equatable.dart';
 
 const defaultDays = {
-  "Monday": false,
-  "Tuesday": false,
-  "Wednesday": false,
-  "Thursday": false,
-  "Friday": false,
-  "Saturday": false,
-  "Sunday": false
+  "Monday": true,
+  "Tuesday": true,
+  "Wednesday": true,
+  "Thursday": true,
+  "Friday": true,
+  "Saturday": true,
+  "Sunday": true
 };
 
 final uuid = Uuid();
@@ -37,7 +37,7 @@ class Alarm extends Equatable {
       this.gentle = false,
       this.note = ""})
       : this.id = id ?? uuid.v1(),
-        this.time = time ?? DateTime.now(),
+        this.time = time ?? DateTime.now().add(Duration(minutes: 1)),
         this.days = days ?? defaultDays;
 
   AlarmEntity toEntity() {
@@ -61,6 +61,37 @@ class Alarm extends Equatable {
   }
 
   String toDaysString() {
+    final weekdays = days["Monday"] &&
+        days["Tuesday"] &&
+        days["Wednesday"] &&
+        days["Thursday"] &&
+        days["Friday"] &&
+        !days["Saturday"] &&
+        !days["Sunday"];
+    if (weekdays) {
+      return "Weekdays";
+    }
+    final weekends = !days["Monday"] &&
+        !days["Tuesday"] &&
+        !days["Wednesday"] &&
+        !days["Thursday"] &&
+        !days["Friday"] &&
+        days["Saturday"] &&
+        days["Sunday"];
+    if (weekends) {
+      return "Weekends";
+    }
+    final everyday = days["Monday"] &&
+        days["Tuesday"] &&
+        days["Wednesday"] &&
+        days["Thursday"] &&
+        days["Friday"] &&
+        days["Saturday"] &&
+        days["Sunday"];
+    if (everyday) {
+      return "Everyday";
+    }
+
     var ret = "";
     days.forEach((key, value) {
       if (value == true) {

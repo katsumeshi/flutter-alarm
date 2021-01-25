@@ -12,11 +12,11 @@ void main() {
         create: (context) => AlarmsBloc()..add(LoadAlarms()),
       ),
     ],
-    child: MyApp(),
+    child: App(),
   ));
 }
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         '/add': (BuildContext context) => SecondRoute(Mode.Add),
         '/edit': (BuildContext context) => SecondRoute(Mode.Edit),
       },
-      title: 'Restaurant Finder',
+      title: '',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),

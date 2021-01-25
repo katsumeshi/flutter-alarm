@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/DataLayar/alarm.dart';
+import 'package:alarm/UI/comonents/audio_player.dart';
 import 'package:alarm/UI/comonents/cron_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,24 +24,15 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
     }
   }
 
-  Stream<AlarmsState> _mapLoadAlarmsToState() async* {
-    try {
-      alarms.forEach((element) {
-        print(element.days);
-      });
-    } catch (_) {
-      // yield PlayerErrorState();
-    }
-  }
+  Stream<AlarmsState> _mapLoadAlarmsToState() async* {}
 
   Stream<AlarmsState> _mapAlarmUpdatedToState(UpdateAlarm event) async* {
     if (state is AlarmsLoaded) {
       final alarms = (state as AlarmsLoaded).alarms.map((alarm) {
-        print(alarm);
         return alarm.id == event.updatedAlarm.id ? event.updatedAlarm : alarm;
       }).toList();
 
-      ClonManager().addAlarms(alarms);
+      ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
       yield AlarmsLoaded(alarms);
     }
   }
@@ -49,7 +41,7 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
     if (state is AlarmsLoaded) {
       final alarms = (state as AlarmsLoaded).alarms.map((e) => e).toList();
       alarms.add(event.alarm);
-      ClonManager().addAlarms(alarms);
+      ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
       yield AlarmsLoaded(alarms);
     }
   }
@@ -61,8 +53,7 @@ class AlarmsBloc extends Bloc<AlarmsEvent, AlarmsState> {
           .toList()
           .where((e) => e.id != event.alarm.id)
           .toList();
-      print(alarms);
-      ClonManager().addAlarms(alarms);
+      ClonManager().addAlarms(alarms, () => Audio().playDefaultAlarm());
       yield AlarmsLoaded(alarms);
     }
   }

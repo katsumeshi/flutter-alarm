@@ -3,6 +3,7 @@ import 'package:alarm/BLoC/alarms_event.dart';
 import 'package:alarm/BLoC/alarms_state.dart';
 import 'package:alarm/DataLayar/alarm.dart';
 import 'package:alarm/UI/comonents/alarm_row.dart';
+import 'package:alarm/UI/comonents/audio_player.dart';
 import 'package:alarm/UI/edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Audio().listenAudio(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Alarms'),
@@ -38,7 +40,6 @@ class MainScreen extends StatelessWidget {
     final bloc = BlocProvider.of<AlarmsBloc>(context);
     return FloatingActionButton(
       onPressed: () {
-        // Audio().cache.play('alarm.mp3');
         final alarm = Alarm();
         bloc.add(AddAlarm(alarm));
         Navigator.of(context).pushNamed('/add', arguments: alarm);

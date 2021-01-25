@@ -6,6 +6,8 @@ import 'package:alarm/UI/comonents/alarm_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'comonents/audio_player.dart';
+
 enum Mode { Add, Edit }
 
 class SecondRoute extends StatelessWidget {
@@ -19,6 +21,7 @@ class SecondRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Audio().listenAudio(context);
     var alarm = ModalRoute.of(context).settings.arguments as Alarm;
     final bloc = BlocProvider.of<AlarmsBloc>(context);
     return BlocBuilder<AlarmsBloc, AlarmsState>(builder: (context, state) {
